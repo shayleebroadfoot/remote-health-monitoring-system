@@ -73,6 +73,16 @@ public class MonitoredPatientData
     }
 
     @Override
+    public String toString() {
+        return "MonitoredPatientData{" +
+                "patient=" + (patient != null ? patient : "null") +
+                ", latestVitals=" + (latestVitals != null ? latestVitals : "null") +
+                ", historySize=" + (history != null ? history.size() : 0) +
+                ", status=" + status +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o)
     {
         if (this == o)

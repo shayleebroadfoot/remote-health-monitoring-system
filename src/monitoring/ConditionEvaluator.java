@@ -1,6 +1,7 @@
 package monitoring;
 
-import domain.*;
+import domain.PatientStatus;
+import domain.VitalSigns;
 
 public interface ConditionEvaluator
 {

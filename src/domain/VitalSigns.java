@@ -1,7 +1,6 @@
 package domain;
 
 import java.time.LocalDateTime;
-
 import java.util.Objects;
 
 public class VitalSigns
@@ -84,6 +83,20 @@ public class VitalSigns
     {
         this.ecgIrregular = ecgIrregular;
     }
+
+    @Override
+    public String toString()
+    {
+        return "VitalSigns{" +
+                "deviceId='" + deviceId + '\'' +
+                ", timeStamp=" + timeStamp +
+                ", heartRate=" + heartRate +
+                ", temperature=" + temperature +
+                ", spo2=" + spo2 +
+                ", ecgIrregular=" + ecgIrregular +
+                '}';
+    }
+
 
     @Override
     public boolean equals(Object o)

@@ -1,6 +1,5 @@
 package monitoring;
 
-import domain.Patient;
 import domain.PatientStatus;
 import domain.VitalSigns;
 

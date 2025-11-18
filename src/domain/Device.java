@@ -71,6 +71,17 @@ public class Device
     }
 
     @Override
+    public String toString() {
+        return "Device{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", patient=" + (patient != null ? patient.getFullName() : "null") +
+                ", dateAdded=" + dateAdded +
+                ", active=" + active +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o)
     {
         if (this == o)

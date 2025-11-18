@@ -1,6 +1,5 @@
 package monitoring;
 
-import domain.Patient;
 import domain.PatientStatus;
 import domain.VitalSigns;
 
@@ -12,6 +11,7 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
     private double[] criticalTemperatureThresholds;
     private int spo2WarningThreshold;
     private int spo2CriticalThreshold;
+    private String message;
 
     public ElderlyPatientEvaluator()
     {
@@ -21,6 +21,7 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
         this.criticalTemperatureThresholds = new double[]{35.0, 40.0};
         this.spo2WarningThreshold = 92;
         this.spo2CriticalThreshold = 88;
+        this.message = "";
     }
 
     public int[] getWarningHrThresholds()
@@ -86,9 +87,17 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
     public PatientStatus evaluateHeartRate(int heartRate)
     {
         if (heartRate < criticalHrThresholds[0] || heartRate > criticalHrThresholds[1])
+        {
+            message = message.isEmpty() ? "heart rate critical" : message + ", heart rate critical";
             return PatientStatus.CRITICAL;
+        }
+
         else if (heartRate < warningHrThresholds[0] || heartRate > warningHrThresholds[1])
+        {
+            message = message.isEmpty() ? "heart rate warning" : message + ", heart rate warning";
             return PatientStatus.WARNING;
+        }
+
         else
             return PatientStatus.NORMAL;
     }
@@ -96,9 +105,17 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
     public PatientStatus evaluateTemperature(double temperature)
     {
         if (temperature < criticalTemperatureThresholds[0] || temperature > criticalTemperatureThresholds[1])
+        {
+            message = message.isEmpty() ? "temperature critical" : message + ", temperature critical";
             return PatientStatus.CRITICAL;
+        }
+
         else if (temperature < warningTemperatureThresholds[0] || temperature > warningTemperatureThresholds[1])
+        {
+            message = message.isEmpty() ? "temperature warning" : message + ", temperature warning";
             return PatientStatus.WARNING;
+        }
+
         else
             return PatientStatus.NORMAL;
     }
@@ -106,9 +123,16 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
     public PatientStatus evaluateSpO2(int spo2)
     {
         if  (spo2 < spo2CriticalThreshold)
+        {
+            message = message.isEmpty() ? "SpO2 critical" : message + ", SpO2 critical";
             return PatientStatus.CRITICAL;
+        }
         else if (spo2 < spo2WarningThreshold)
+        {
+            message = message.isEmpty() ? "SpO2 critical" : message + ", SpO2 critical";
             return PatientStatus.WARNING;
+        }
+
         else
             return PatientStatus.NORMAL;
     }
@@ -127,5 +151,10 @@ public class ElderlyPatientEvaluator implements ConditionEvaluator
             return PatientStatus.WARNING;
         else
             return PatientStatus.NORMAL;
+    }
+
+    public String getMessage()
+    {
+        return message;
     }
 }
