@@ -3,21 +3,28 @@ package app;
 import alert.AlertRepository;
 import alert.AlertService;
 import alert.InMemoryAlertRepository;
+import controller.LoginController;
+import view.LoginView;
 import domain.*;
+import employee.AuthenticationService;
+import employee.EmployeeRepository;
+import employee.EmployeeService;
+import employee.InMemoryEmployeeRepository;
 import io.BasestationReader;
 import io.CsvBasestationAdapter;
 import io.CsvFileReader;
 import monitoring.*;
 import patient.InMemoryPatientRepository;
 import patient.PatientRepository;
+import view.MonitoringDashboardView;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main
 {
@@ -48,9 +55,11 @@ public class Main
 
         // Get csv file with device readings
         File file = new File("test_vitals.csv");
-        writeTestVitalsFile(file, devices); // Generate csv with device ids and random vitals
-        CsvBasestationAdapter adapter = new CsvBasestationAdapter(new CsvFileReader(file));
-        List<VitalSigns> readings = adapter.readAll();
+        CsvTestDataGenerator generator = new CsvTestDataGenerator();
+        generator.writeTestVitalsFile(file, devices);
+
+        BasestationReader csvBasestationAdapter = new CsvBasestationAdapter(new CsvFileReader(file));
+        List<VitalSigns> readings = csvBasestationAdapter.readAll();
 
         for (VitalSigns vitalSigns : readings)
         {
@@ -61,13 +70,44 @@ public class Main
         AlertService alertService = new AlertService(alertRepository);
         MonitoringModel monitoringModel = new MonitoringModel();
         MonitoredPatientDataRepository monitoredPatientDataRepository = new InMemoryMonitoredPatientDataRepository();
-        MonitoringService monitoringService = new MonitoringService(adapter, alertService, monitoringModel, deviceRepository, monitoredPatientDataRepository);
+        MonitoringService monitoringService = new MonitoringService(csvBasestationAdapter, alertService, monitoringModel, deviceRepository, monitoredPatientDataRepository);
         monitoringService.pollOnce();
 
         for (MonitoredPatientData monitoredPatientData : monitoredPatientDataRepository.findAll())
         {
             System.out.println(monitoredPatientData.toString());
         }
+
+        // String firstName, String lastName, String email, String username, String password, String role
+        Employee employee1 = new Employee("Shaylee", "Broadfoot", "sbroadfoot@gmail.com", "sbroadfoot", "password", "ADMIN");
+        EmployeeRepository employeeRepository = new InMemoryEmployeeRepository();
+        EmployeeService employeeService = new EmployeeService(employeeRepository);
+        employeeService.createEmployee(employee1);
+        List<Employee> employees = employeeRepository.findAll();
+
+        for (Employee employee : employees)
+        {
+            System.out.println(employee.toString());
+        }
+
+        AuthenticationService authService = AuthenticationService.getInstance(employeeRepository);
+
+        System.out.println(authService.login(employee1.getUsername(), employee1.getPassword()) ? "login" : "no login");
+        authService.logout();
+
+        MonitoringDashboardView monitoringDashboardView = new MonitoringDashboardView();
+        List<MonitoredPatientData> list = monitoredPatientDataRepository.findAll();
+        List<Alert> alerts = new ArrayList<>();
+        monitoringDashboardView.update(list, alerts);
+
+        /* Code to run app using controllers and views */
+        Scanner scanner = new Scanner(System.in);
+
+        LoginView loginView = new LoginView(scanner);
+        LoginController loginController = new LoginController(authService, loginView);
+
+        boolean loggedIn = loginController.run();
+
     }
 
     public static List<Patient> createSamplePatients()
@@ -109,7 +149,7 @@ public class Main
         patients.add(new Patient(
                 "Eva",
                 "Lopez",
-                LocalDate.of(1995, 9, 30),
+                LocalDate.of(1953, 9, 30),
                 "230 Pine St, San Diego, CA",
                 "619-555-3312"
         ));
@@ -158,38 +198,4 @@ public class Main
 
         return devices;
     }
-
-    private static void writeTestVitalsFile(File file, List<Device> devices)
-    {
-        try (PrintWriter out = new PrintWriter(file))
-        {
-            for (Device d : devices)
-            {
-                // Generate synthetic vitals readings for testing
-                LocalDateTime now = LocalDateTime.now();
-
-                int heartRate = 70 + (int) (Math.random() * 40);      // 70–110
-                double temp = 36.5 + (Math.random() * 1.5);           // 36.5–38.0
-                int spo2 = 94 + (int) (Math.random() * 6);            // 94–99
-                boolean ecgIrregular = Math.random() < 0.2;           // 20% chance
-
-                out.printf("%s,%s,%d,%.1f,%d,%b%n",
-                        d.getId(),
-                        now,
-                        heartRate,
-                        temp,
-                        spo2,
-                        ecgIrregular
-                );
-            }
-
-            System.out.println("Wrote test_vitals.csv with " + devices.size() + " readings.");
-        }
-
-        catch (IOException e)
-        {
-            throw new RuntimeException("Failed to write test_vitals.csv", e);
-        }
-    }
-
 }

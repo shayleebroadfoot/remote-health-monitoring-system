@@ -47,6 +47,15 @@ public class CsvFileReader
                 readings.add(v);
         }
 
+        try
+        {
+            Files.write(csvFile.toPath(), new byte[0]); // clear file after reading
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Failed to clear CSV file: " + csvFile, e);
+        }
+
         return readings;
     }
 

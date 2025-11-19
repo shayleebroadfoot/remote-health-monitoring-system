@@ -7,7 +7,6 @@ import java.util.Optional;
 public class AuthenticationService
 {
     private static AuthenticationService instance;
-
     private final EmployeeRepository employeeRepository;
     private Employee currentUser;
 
@@ -16,18 +15,19 @@ public class AuthenticationService
         this.employeeRepository = employeeRepository;
     }
 
-    public static AuthenticationService getInstance(EmployeeRepository employeeRepository)
+    public static synchronized AuthenticationService getInstance(EmployeeRepository employeeRepository)
     {
         if (instance == null)
-        {
             instance = new AuthenticationService(employeeRepository);
-        }
 
         return instance;
     }
 
     public boolean login(String username, String password)
     {
+        if (currentUser != null)
+            return false;
+
         Optional<Employee> found = employeeRepository.findByUsername(username);
 
         if (found.isPresent() && found.get().getUsername() != null && password.equals(found.get().getPassword()))

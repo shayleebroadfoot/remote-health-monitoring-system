@@ -42,9 +42,9 @@ public class MonitoringModel implements Subject
         }
     }
 
-    public void getMonitoredPatientData(List<MonitoredPatientData> monitoredPatientData)
+    public List<MonitoredPatientData> getMonitoredPatientData()
     {
-        this.monitoredPatientData = monitoredPatientData;
+        return new ArrayList<>(monitoredPatientData);
     }
 
     public void setMonitoredPatientData(List<MonitoredPatientData> monitoredPatientData)
@@ -54,8 +54,6 @@ public class MonitoringModel implements Subject
 
         else
             this.monitoredPatientData = new ArrayList<>(monitoredPatientData);
-
-        notifyObservers();
     }
 
     public List<Alert> getActiveAlerts()
@@ -70,8 +68,6 @@ public class MonitoringModel implements Subject
 
         else
             this.activeAlerts = new ArrayList<>(alerts);
-
-        notifyObservers();
     }
 }
 

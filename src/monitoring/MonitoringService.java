@@ -37,6 +37,8 @@ public class MonitoringService
         {
             processReading(vitalSigns);
         }
+
+        syncModel();
     }
 
     /**
@@ -72,17 +74,20 @@ public class MonitoringService
 
         updateLatestVitals(patientData, vitalSigns);
 
+        // Evaluate patient: get the status and alert message
         ConditionEvaluator conditionEvaluator = setConditionEvaluator(getAge(patient.getBirthDate()));
         PatientStatus status = conditionEvaluator.evaluate(vitalSigns);
         String message = conditionEvaluator.getMessage();
 
+        // Update the patient data in the monitored patient data repository and create alert if status is not normal
+        patientData.setStatus(status);
         updatePatientStatus(patientData);
         updateAlerts(patient, status, message);
     }
 
     private int getAge(LocalDate birthDate)
     {
-        return (int)ChronoUnit.DAYS.between(birthDate, LocalDate.now());
+        return (int)ChronoUnit.YEARS.between(birthDate, LocalDate.now());
     }
 
     private ConditionEvaluator setConditionEvaluator(int age)
@@ -105,7 +110,6 @@ public class MonitoringService
     private void updatePatientStatus(MonitoredPatientData monitoredPatientData)
     {
         monitoredPatientDataRepository.save(monitoredPatientData);
-        syncMonitoredPatientData();
     }
 
     private void updateAlerts(Patient patient, PatientStatus status, String message)
@@ -118,17 +122,13 @@ public class MonitoringService
 
         Alert alert = new Alert(patient, status, message);
         alertService.raiseAlert(alert);
-
-        syncAlerts();
     }
 
-    private void syncMonitoredPatientData()
+    private void syncModel()
     {
         monitoringModel.setMonitoredPatientData(monitoredPatientDataRepository.findAll());
-    }
-    private void syncAlerts()
-    {
         monitoringModel.setActiveAlerts(alertService.getActiveAlerts());
+        monitoringModel.notifyObservers();
     }
 }
 

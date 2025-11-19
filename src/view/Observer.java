@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface Observer
 {
-    public void update(List<MonitoredPatientData> patients, List<Alert> alerts);
+    public void update(List<MonitoredPatientData> monitoredPatientData, List<Alert> alerts);
 }

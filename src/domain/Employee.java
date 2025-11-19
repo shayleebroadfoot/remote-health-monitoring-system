@@ -12,7 +12,7 @@ public class Employee
     private String password;
     private Role role;
 
-    public Employee(String firstName, String lastName, String email,String username, String password, String role)
+    public Employee(String firstName, String lastName, String email, String username, String password, String role)
     {
         this.id = null;
         this.firstName = firstName;
@@ -96,6 +96,20 @@ public class Employee
     public String getFullName()
     {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Employee{" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
     }
 
     @Override
