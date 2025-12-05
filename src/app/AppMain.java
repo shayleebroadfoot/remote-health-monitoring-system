@@ -85,6 +85,7 @@ public class AppMain
         MainMenuView mainMenuView = new MainMenuView(scanner);
         AlertsView alertsView = new AlertsView();
 
+        // MonitoringController monitoringController, AlertService alertService, AlertsView alertsView, Scanner scanner
         AlertsController alertsController = new AlertsController(monitoringController, monitoringModel, alertService, alertsView, scanner);
         AppController appController = new AppController(authService, loginController, monitoringController, alertsController, monitoringModel, mainMenuView, scanner);
         appController.run();

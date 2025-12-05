@@ -5,6 +5,7 @@ import domain.Alert;
 import monitoring.MonitoringModel;
 import view.AlertsView;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class AlertsController
@@ -37,7 +38,7 @@ public class AlertsController
             System.out.println("-----------");
             System.out.println("1) Poll once and refresh alerts");
             System.out.println("2) Show current active alerts");
-            System.out.println("3) Acknowledge an alert by ID");
+            System.out.println("3) Acknowledge an alert by number");
             System.out.println("4) Back to main menu");
             System.out.print("Select an option: ");
 
@@ -54,7 +55,7 @@ public class AlertsController
                     break;
 
                 case "3":
-                    acknowledgeAlertById();
+                    acknowledgeAlertByNumber();
                     break;
 
                 case "4":
@@ -69,25 +70,61 @@ public class AlertsController
 
     private void pollOnceAndShow()
     {
-        // One full monitoring cycle: vitals + alert generation + model.notifyObservers()
         monitoringController.pollAndUpdateOnce();
         alertsView.displayActiveAlerts();
     }
 
-    private void acknowledgeAlertById()
+    private void acknowledgeAlertByNumber()
     {
-        System.out.println();
-        System.out.print("Enter the Alert ID to acknowledge (or press ENTER to cancel): ");
-        String alertId = scanner.nextLine().trim();
+        List<Alert> activeAlerts = alertsView.getActiveAlertsSnapshot();
 
-        if (alertId.isEmpty())
+        if (activeAlerts.isEmpty())
+        {
+            System.out.println("No active alerts to acknowledge.");
+            return;
+        }
+
+        System.out.println();
+        alertsView.displayActiveAlerts();
+        System.out.print("Enter the alert number to acknowledge (or press ENTER to cancel): ");
+
+        String input = scanner.nextLine().trim();
+
+        if (input.isEmpty())
         {
             System.out.println("Cancelled.");
             return;
         }
 
-        alertService.acknowledgeAlert(alertId);
+        int index;
 
-        System.out.println("Alert " + alertId + " acknowledged (if it existed).");
+        try
+        {
+            index = Integer.parseInt(input);
+        }
+        catch (NumberFormatException e)
+        {
+            System.out.println("Invalid number.");
+            return;
+        }
+
+        if (index < 1 || index > activeAlerts.size())
+        {
+            System.out.println("Selection out of range.");
+            return;
+        }
+
+        Alert selectedAlert = activeAlerts.get(index - 1);
+
+        if (selectedAlert.getId() == null)
+        {
+            System.out.println("Selected alert has no ID and cannot be acknowledged.");
+            return;
+        }
+
+        alertService.acknowledgeAlert(selectedAlert.getId());
+        selectedAlert.setAcknowledged(true);
+
+        System.out.println("Alert " + index + " acknowledged.");
     }
 }
