@@ -44,7 +44,7 @@ public class MonitoringService
     /**
      * Process a single vitals reading for one patient.
      */
-    public void processReading(VitalSigns vitalSigns)
+    private void processReading(VitalSigns vitalSigns)
     {
         if (vitalSigns == null)
             return;

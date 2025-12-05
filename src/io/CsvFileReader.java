@@ -60,7 +60,7 @@ public class CsvFileReader
         return readings;
     }
 
-    public List<String> readLines()
+    private List<String> readLines()
     {
         try
         {
@@ -70,11 +70,6 @@ public class CsvFileReader
         {
             throw new RuntimeException("Failed to read CSV file: " + csvFile, e);
         }
-    }
-
-    public File getCsvFile()
-    {
-        return csvFile;
     }
 
     private VitalSigns parseLine(String line)

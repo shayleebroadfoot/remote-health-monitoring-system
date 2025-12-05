@@ -71,7 +71,6 @@ public class PatientDetailView implements Observer
 
     private List<Alert> findPatientAlerts(List<Alert> alerts)
     {
-        // We don't need a new list type here; just filter on the fly when printing.
         return alerts;
     }
 

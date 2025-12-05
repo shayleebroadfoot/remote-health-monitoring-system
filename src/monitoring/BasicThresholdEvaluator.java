@@ -84,7 +84,29 @@ public class BasicThresholdEvaluator implements ConditionEvaluator
         this.spo2CriticalThreshold = spo2CriticalThreshold;
     }
 
-    public PatientStatus evaluateHeartRate(int heartRate)
+    @Override
+    public PatientStatus evaluate(VitalSigns vitals)
+    {
+        int hr = vitals.getHeartRate();
+        double temp = vitals.getTemperature();
+        int spo2 = vitals.getSpo2();
+        boolean ecg = vitals.isEcgIrregular();
+
+        if (ecg || evaluateHeartRate(hr) ==  PatientStatus.CRITICAL || evaluateTemperature(temp) ==  PatientStatus.CRITICAL || evaluateSpO2(spo2) == PatientStatus.CRITICAL)
+            return PatientStatus.CRITICAL;
+        else if (evaluateHeartRate(hr) ==  PatientStatus.WARNING || evaluateTemperature(temp) ==  PatientStatus.WARNING || evaluateSpO2(spo2) == PatientStatus.WARNING)
+            return PatientStatus.WARNING;
+        else
+            return PatientStatus.NORMAL;
+    }
+
+    @Override
+    public String getMessage()
+    {
+        return message;
+    }
+
+    private PatientStatus evaluateHeartRate(int heartRate)
     {
         if (heartRate < criticalHrThresholds[0] || heartRate > criticalHrThresholds[1])
         {
@@ -102,7 +124,7 @@ public class BasicThresholdEvaluator implements ConditionEvaluator
             return PatientStatus.NORMAL;
     }
 
-    public PatientStatus evaluateTemperature(double temperature)
+    private PatientStatus evaluateTemperature(double temperature)
     {
         if (temperature < criticalTemperatureThresholds[0] || temperature > criticalTemperatureThresholds[1])
         {
@@ -120,7 +142,7 @@ public class BasicThresholdEvaluator implements ConditionEvaluator
             return PatientStatus.NORMAL;
     }
 
-    public PatientStatus evaluateSpO2(int spo2)
+    private PatientStatus evaluateSpO2(int spo2)
     {
         if  (spo2 < spo2CriticalThreshold)
         {
@@ -135,26 +157,5 @@ public class BasicThresholdEvaluator implements ConditionEvaluator
 
         else
             return PatientStatus.NORMAL;
-    }
-
-    @Override
-    public PatientStatus evaluate(VitalSigns vitals)
-    {
-        int hr = vitals.getHeartRate();
-        double temp = vitals.getTemperature();
-        int spo2 = vitals.getSpo2();
-        boolean ecg = vitals.isEcgIrregular();
-
-        if (ecg || evaluateHeartRate(hr) ==  PatientStatus.CRITICAL || evaluateTemperature(temp) ==  PatientStatus.CRITICAL || evaluateSpO2(spo2) == PatientStatus.CRITICAL)
-            return PatientStatus.CRITICAL;
-        else if (evaluateHeartRate(hr) ==  PatientStatus.WARNING || evaluateTemperature(temp) ==  PatientStatus.WARNING || evaluateSpO2(spo2) == PatientStatus.WARNING)
-            return PatientStatus.WARNING;
-        else
-            return PatientStatus.NORMAL;
-    }
-
-    public String getMessage()
-    {
-        return message;
     }
 }

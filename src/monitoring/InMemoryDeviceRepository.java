@@ -31,6 +31,8 @@ public class InMemoryDeviceRepository implements DeviceRepository
         return new ArrayList<>(devices.values());
     }
 
+    // Save device to repository
+    // If it's a new device, create a unique ID. Else save with existing ID.
     @Override
     public void save(Device device)
     {
