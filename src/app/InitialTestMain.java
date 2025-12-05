@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class OM
+public class InitialTestMain
 {
     public static void main(String[] args)
     {
@@ -58,7 +58,7 @@ public class OM
         CsvTestDataGenerator generator = new CsvTestDataGenerator();
         generator.writeTestVitalsFile(file, devices);
 
-        BasestationReader csvBasestationAdapter = new CsvBasestationAdapter(new CsvFileReader(file));
+        BasestationReader csvBasestationAdapter = new CsvBasestationAdapter(new CsvFileReader(file, deviceRepository));
         List<VitalSigns> readings = csvBasestationAdapter.readAll();
 
         for (VitalSigns vitalSigns : readings)

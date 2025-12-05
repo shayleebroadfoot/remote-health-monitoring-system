@@ -13,7 +13,8 @@ import employee.EmployeeRepository;
 import employee.EmployeeService;
 import employee.InMemoryEmployeeRepository;
 import io.BasestationReader;
-import io.SimulatedBasestation;
+import io.CsvBasestationAdapter;
+import io.CsvFileReader;
 import monitoring.DeviceRepository;
 import monitoring.InMemoryDeviceRepository;
 import monitoring.MonitoredPatientDataRepository;
@@ -59,8 +60,8 @@ public class AppMain
         CsvTestDataGenerator generator = new CsvTestDataGenerator();
         generator.writeTestVitalsFile(file, devices);
 
-        BasestationReader basestationReader = new SimulatedBasestation(deviceRepository, file);
-//      BasestationReader basestationReader = new CsvBasestationAdapter(new CsvFileReader(file));
+//        BasestationReader basestationReader = new SimulatedBasestation(deviceRepository, file);
+        BasestationReader basestationReader = new CsvBasestationAdapter(new CsvFileReader(file, deviceRepository));
 
         AlertRepository alertRepository = new InMemoryAlertRepository();
         AlertService alertService = new AlertService(alertRepository);
