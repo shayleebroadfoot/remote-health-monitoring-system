@@ -94,8 +94,10 @@ public class BasicThresholdEvaluator implements ConditionEvaluator
 
         if (ecg || evaluateHeartRate(hr) ==  PatientStatus.CRITICAL || evaluateTemperature(temp) ==  PatientStatus.CRITICAL || evaluateSpO2(spo2) == PatientStatus.CRITICAL)
             return PatientStatus.CRITICAL;
+
         else if (evaluateHeartRate(hr) ==  PatientStatus.WARNING || evaluateTemperature(temp) ==  PatientStatus.WARNING || evaluateSpO2(spo2) == PatientStatus.WARNING)
             return PatientStatus.WARNING;
+
         else
             return PatientStatus.NORMAL;
     }
