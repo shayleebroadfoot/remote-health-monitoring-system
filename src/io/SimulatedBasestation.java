@@ -3,9 +3,6 @@ package io;
 import app.CsvTestDataGenerator;
 import domain.Device;
 import domain.VitalSigns;
-import io.BasestationReader;
-import io.CsvBasestationAdapter;
-import io.CsvFileReader;
 import monitoring.DeviceRepository;
 
 import java.io.File;

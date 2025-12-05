@@ -60,7 +60,7 @@ public class AppMain
         generator.writeTestVitalsFile(file, devices);
 
         BasestationReader basestationReader = new SimulatedBasestation(deviceRepository, file);
-//        BasestationReader basestationReader = new CsvBasestationAdapter(new CsvFileReader(file));
+//      BasestationReader basestationReader = new CsvBasestationAdapter(new CsvFileReader(file));
 
         AlertRepository alertRepository = new InMemoryAlertRepository();
         AlertService alertService = new AlertService(alertRepository);
