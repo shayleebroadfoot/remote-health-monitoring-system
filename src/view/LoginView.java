@@ -41,22 +41,14 @@ public class LoginView
 
     public void showLoginSuccess(Employee employee)
     {
-        // Your AuthenticationService already prints "Login successful..."
-        // but we can still show a clean confirmation here if you like.
         if (employee != null)
-        {
             System.out.println("Logged in as: " + employee.getFullName() + " (" + employee.getRole() + ")");
-        }
         else
-        {
             System.out.println("Login successful.");
-        }
     }
 
     public void showLoginFailure()
     {
-        // AuthenticationService already prints a failure message.
-        // This keeps it simple and not too noisy.
         System.out.println("Login failed.");
     }
 

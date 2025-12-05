@@ -9,11 +9,11 @@ public interface EmployeeRepository
 {
     public Optional<Employee> findById(String id);
 
-    Optional<Employee> findByUsername(String username);
+    public Optional<Employee> findByUsername(String username);
 
-    List<Employee> findAll();
+    public List<Employee> findAll();
 
-    void save(Employee employee);
+    public void save(Employee employee);
 
-    void delete(String id);
+    public void delete(String id);
 }
