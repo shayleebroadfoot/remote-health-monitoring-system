@@ -1,5 +1,6 @@
 package app;
 
+import controller.AlertsController;
 import controller.LoginController;
 import controller.MonitoringController;
 import controller.PatientDetailController;
@@ -18,21 +19,24 @@ public class AppController
     private final AuthenticationService authenticationService;
     private final LoginController loginController;
     private final MonitoringController monitoringController;
+    private final AlertsController alertsController;
     private final MonitoringModel monitoringModel;
     private final MainMenuView mainMenuView;
     private final Scanner scanner;
 
     private Thread monitoringThread;
 
-    public AppController(AuthenticationService authenticationService, LoginController loginController, MonitoringController monitoringController, MonitoringModel monitoringModel, MainMenuView mainMenuView, Scanner scanner)
+    public AppController(AuthenticationService authenticationService, LoginController loginController, MonitoringController monitoringController, AlertsController alertsController, MonitoringModel monitoringModel, MainMenuView mainMenuView, Scanner scanner)
     {
         this.authenticationService = authenticationService;
         this.loginController = loginController;
         this.monitoringController = monitoringController;
+        this.alertsController = alertsController;
         this.monitoringModel = monitoringModel;
         this.mainMenuView = mainMenuView;
         this.scanner = scanner;
     }
+
 
     public void run()
     {
@@ -54,14 +58,65 @@ public class AppController
         stopContinuousMonitoring();
     }
 
+//    private void showMainMenu()
+//    {
+//        boolean inMenu = true;
+//
+//        while (inMenu && authenticationService.isLoggedIn())
+//        {
+//            mainMenuView.showHeader();
+//            mainMenuView.showOptions();
+//            int choice = mainMenuView.readChoice();
+//
+//            switch (choice)
+//            {
+//                case 1:
+//                    handleMonitoringMenu();
+//                    break;
+//
+//                case 2:
+//                    System.out.println("Patient management not implemented yet.");
+//                    break;
+//
+//                case 3:
+//                    System.out.println("Device management not implemented yet.");
+//                    break;
+//
+//                case 4:
+//                    authenticationService.logout();
+//                    System.out.println("You have been logged out.");
+//                    inMenu = false;
+//                    break;
+//
+//                case 5:
+//                    mainMenuView.showGoodbye();
+//                    stopContinuousMonitoring();
+//                    System.exit(0);
+//                    break;
+//
+//                default:
+//                    mainMenuView.showInvalidChoice();
+//            }
+//        }
+//    }
+
     private void showMainMenu()
     {
         boolean inMenu = true;
 
         while (inMenu && authenticationService.isLoggedIn())
         {
-            mainMenuView.showHeader();
-            mainMenuView.showOptions();
+            System.out.println();
+            System.out.println("Main Menu");
+            System.out.println("---------");
+            System.out.println("1) Monitoring");
+            System.out.println("2) Alerts");
+            System.out.println("3) Patient management (not implemented yet)");
+            System.out.println("4) Device management (not implemented yet)");
+            System.out.println("5) Logout");
+            System.out.println("6) Exit");
+            System.out.print("Select an option: ");
+
             int choice = mainMenuView.readChoice();
 
             switch (choice)
@@ -71,20 +126,24 @@ public class AppController
                     break;
 
                 case 2:
-                    System.out.println("Patient management not implemented yet.");
+                    openAlertsMenu();
                     break;
 
                 case 3:
-                    System.out.println("Device management not implemented yet.");
+                    System.out.println("Patient management not implemented yet.");
                     break;
 
                 case 4:
+                    System.out.println("Device management not implemented yet.");
+                    break;
+
+                case 5:
                     authenticationService.logout();
                     System.out.println("You have been logged out.");
                     inMenu = false;
                     break;
 
-                case 5:
+                case 6:
                     mainMenuView.showGoodbye();
                     stopContinuousMonitoring();
                     System.exit(0);
@@ -208,6 +267,18 @@ public class AppController
         detailController.run();
     }
 
+    private void openAlertsMenu()
+    {
+        boolean wasRunning = monitoringThread != null && monitoringThread.isAlive();
+
+        if (wasRunning)
+            stopContinuousMonitoring();
+
+        alertsController.run();
+
+        if (wasRunning)
+            startContinuousMonitoring(5000);
+    }
 
     private void startContinuousMonitoring(long intervalMillis)
     {

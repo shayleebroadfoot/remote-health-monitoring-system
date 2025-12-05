@@ -3,6 +3,7 @@ package app;
 import alert.AlertRepository;
 import alert.AlertService;
 import alert.InMemoryAlertRepository;
+import controller.AlertsController;
 import controller.LoginController;
 import controller.MonitoringController;
 import domain.Device;
@@ -19,6 +20,7 @@ import io.CsvTestDataGenerator;
 import monitoring.*;
 import patient.InMemoryPatientRepository;
 import patient.PatientRepository;
+import view.AlertsView;
 import view.LoginView;
 import view.MainMenuView;
 import view.MonitoringDashboardView;
@@ -81,8 +83,10 @@ public class AppMain
         LoginView loginView = new LoginView(scanner);
         LoginController loginController = new LoginController(authService, loginView);
         MainMenuView mainMenuView = new MainMenuView(scanner);
+        AlertsView alertsView = new AlertsView();
 
-        AppController appController = new AppController(authService, loginController, monitoringController, monitoringModel, mainMenuView, scanner);
+        AlertsController alertsController = new AlertsController(monitoringController, monitoringModel, alertService, alertsView, scanner);
+        AppController appController = new AppController(authService, loginController, monitoringController, alertsController, monitoringModel, mainMenuView, scanner);
         appController.run();
     }
 
